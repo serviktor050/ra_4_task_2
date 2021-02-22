@@ -12,6 +12,8 @@ export default function TrainingForm(props) {
   const [state, setState] = useState(DEFAULT_FORM);
 
   const onFormFieldChangeTimestamp = (e) => {
+    //let date = new Date(converterDate(e.target.value)).getTime();
+
     setState((prev) => {
       const newState = {
         ...prev,
