@@ -1,4 +1,9 @@
-export default function converterDate (string) {
-    let newString = `${string.substr(6,10)}, ${string.substring(3,6) - 1}, ${string.slice(0,2)} `
+export default function converterDate(data) {
+    let newString;
+    if(data.length === 10) {
+        newString = `${data.substr(6,10)}, ${data.substring(3,6) - 1}, ${data.slice(0,2)}`
+    } else {
+        newString = data
+    }
     return newString
 }

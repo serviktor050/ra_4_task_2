@@ -3,7 +3,7 @@ import { useState } from "react";
 import TrainingForm from "./TrainingForm.jsx";
 import TrainingList from "./TraningList.jsx";
 import converterDate from "../functions/converterDate.js";
-import sortTraining from "../functions/sortTraining.js";
+import reConverterDate from "../functions/reConverterDate.js";
 
 const trainingMapper = (rawTraning) => ({
   id: rawTraning.id,
@@ -20,10 +20,17 @@ export default function TrainingManager(props) {
     if (timestamp !== "" && distance !== "") {
       const newPrev = [];
       const oldArray = [];
-      const sortedArray = [];
+
       setTrainingsData((prev) => {
         prev.map((object) => {
-          if (timestamp === object.timestamp) {
+          object.timestamp = new Date(
+            converterDate(object.timestamp)
+          ).getTime();
+          console.log(object);
+
+          if (
+            new Date(converterDate(timestamp)).getTime() === object.timestamp
+          ) {
             object.distance = Number(object.distance) + Number(distance);
             newPrev.push(...prev);
             return newPrev;
@@ -38,18 +45,76 @@ export default function TrainingManager(props) {
           //Сравнение дат
           oldArray.push(...prev, {
             id: prev[prev.length - 1].id + 1,
-            timestamp: timestamp,
+            timestamp: new Date(converterDate(timestamp)).getTime(),
             distance: distance,
           });
 
-          console.log(sortTraining());
+          oldArray.sort((a, b) => a.timestamp - b.timestamp); //Сортировка по дате работает
 
-          /*oldArray.map((object) => {
-            let convertedDate = new Date(
-              converterDate(object.timestamp)
-            ).getTime();
+          console.log(oldArray);
 
+          oldArray.forEach((object) => {
+            let newObJ = {
+              id: object.id,
+              timestamp: reConverterDate(object.timestamp),
+              distance: object.distance,
+            };
+            console.log(newObJ);
+            return newObJ;
+          });
+
+          /*
+          const reConveredOldArray = oldArray.map((object) => {
+            object.timestamp = reConverterDate(object.timestamp);
+
+
+            let newObject = {
+              id: object.id,
+              timestamp: reConverterDate(object.timestamp),
+              distance: object.distance,
+            };
+            return newObject;
+            
           });*/
+
+          return oldArray;
+
+          /*
+          for (let item of reConveredOldArray) {
+            oldArray.push(item);
+          }
+*/
+
+          //oldArray.splice(0, oldArray.length);
+
+          /*
+          oldArray.forEach((object) => {
+            object.timestamp = reConverterDate(object.timestamp);
+            console.log(object.timestamp);
+          });
+*/
+          //oldArray.splice(0, oldArray.length);
+          /*
+
+          console.log(oldArray);
+*/
+
+          /*
+          const sortedMappedOldArray = sortTraining(mappedOldArray);
+
+          console.log(newArray);
+
+          const newArray = sortedMappedOldArray.map((object) => {
+            let reconvertedDate = reConverterDate(object.timestamp);
+            let afterConvertObject = {
+              id: object.id,
+              timestamp: reconvertedDate,
+              distance: object.distance,
+            };
+            return afterConvertObject;
+          });
+          console.log(newArray);
+          return newArray;
 
           /*[
             ...prev,
