@@ -31,7 +31,25 @@ export default function TrainingManager(props) {
             new Date(converterDate(timestamp)).getTime() === object.timestamp
           ) {
             object.distance = Number(object.distance) + Number(distance);
+
             newPrev.push(...prev);
+
+            newPrev.forEach((object) => {
+              if (typeof object.timestamp === "string") {
+                object.timestamp = new Date(
+                  converterDate(object.timestamp)
+                ).getTime();
+              }
+              console.log(object);
+            });
+
+            console.log(newPrev);
+
+            newPrev.forEach((object) => {
+              object.timestamp = reConverterDate(object.timestamp);
+              console.log(object);
+            });
+            console.log(newPrev);
             return newPrev;
           } else {
             return newPrev;
