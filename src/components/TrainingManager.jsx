@@ -2,8 +2,8 @@ import React from "react";
 import { useState } from "react";
 import TrainingForm from "./TrainingForm.jsx";
 import TrainingList from "./TraningList.jsx";
-import converterDate from "../functions/converterDate.js";
-import reConverterDate from "../functions/reConverterDate.js";
+import moment from "moment";
+import shortid from "shortid";
 
 const trainingMapper = (rawTraning) => ({
   id: rawTraning.id,
@@ -18,63 +18,34 @@ export default function TrainingManager(props) {
 
   const onNewTraining = (timestamp, distance) => {
     if (timestamp !== "" && distance !== "") {
-      const newPrev = [];
-      const array = [];
-
       setTrainingsData((prev) => {
-        prev.map((object) => {
-          object.timestamp = new Date(
-            converterDate(object.timestamp)
-          ).getTime();
-
-          if (
-            new Date(converterDate(timestamp)).getTime() === object.timestamp
-          ) {
-            object.distance = Number(object.distance) + Number(distance);
-
-            newPrev.push(...prev);
-
-            newPrev.forEach((object) => {
-              if (typeof object.timestamp === "string") {
-                object.timestamp = new Date(
-                  converterDate(object.timestamp)
-                ).getTime();
-              }
-              console.log(object);
-            });
-
-            console.log(newPrev);
-
-            newPrev.forEach((object) => {
-              object.timestamp = reConverterDate(object.timestamp);
-              console.log(object);
-            });
-            console.log(newPrev);
-            return newPrev;
-          } else {
-            return newPrev;
-          }
+        const newPrev = prev.map((object) => {
+          return object;
         });
 
-        if (newPrev.length !== 0) {
-          return newPrev;
+        let addObject = {
+          id: shortid.generate(),
+          timestamp: moment(timestamp, "DD.MM.YYYY")._i,
+          distance: distance,
+        };
+
+        let findElement = newPrev.find(
+          (item) => item.timestamp === addObject.timestamp
+        );
+
+        if (!findElement) {
+          newPrev.push(addObject);
         } else {
-          //Сравнение дат
-
-          array.push(...prev, {
-            id: prev[prev.length - 1].id + 1,
-            timestamp: new Date(converterDate(timestamp)).getTime(),
-            distance: distance,
-          });
-
-          array.sort((a, b) => a.timestamp - b.timestamp);
-
-          array.forEach((object) => {
-            object.timestamp = reConverterDate(object.timestamp);
-          });
-
-          return array;
+          findElement.distance =
+            Number(findElement.distance) + Number(addObject.distance);
         }
+
+        newPrev.sort(
+          (a, b) =>
+            moment(a.timestamp, "DD.MM.YYYY") -
+            moment(b.timestamp, "DD.MM.YYYY")
+        );
+        return newPrev;
       });
     } else {
       setTrainingsData((prev) => {

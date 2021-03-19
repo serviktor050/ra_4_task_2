@@ -5,6 +5,6 @@ export default function TrainingList(props) {
   const { trainings, onDelete } = props;
 
   return trainings.map((training) => (
-    <Training training={training} onDelete={onDelete} />
+    <Training key={training.id} training={training} onDelete={onDelete} />
   ));
 }
